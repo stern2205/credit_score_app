@@ -3,10 +3,14 @@ import joblib
 import pandas as pd
 import plotly.graph_objects as go
 import numpy as np
+import random
+from datetime import datetime
+
 # Function to process the form data and make predictions
 def process_form(credit_history_age, monthly_balance, monthly_inhand_salary, annual_income,
                  interest_rate, outstanding_debt, num_of_loan, delay_from_due_date,
-                 num_of_delayed_payment, total_emi_per_month, num_credit_inquiries):
+                 num_of_delayed_payment, total_emi_per_month, num_credit_inquiries,
+                 name, age, profession, ssn):
 
     # Create a DataFrame with the input data
     input_data = pd.DataFrame({
@@ -41,24 +45,38 @@ def process_form(credit_history_age, monthly_balance, monthly_inhand_salary, ann
             prediction_proba = model.predict_proba(input_data)
         except Exception as e:
             st.error(f"Model prediction failed: {e}")
-            return    model_path == 'content/logistic_regression_model.pkl'
-    try:
-        with open(model_path, 'rb') as file:
-            model = joblib.load(file)
-    except FileNotFoundError:
-        st.error("Model file not found. Please check the file path.")
-        return
-    except Exception as e:
-        st.error(f"An error occurred while loading the model: {e}")
-        return
+            return
 
     # Mapping credit score to labels
     credit_score_label = {0: "Poor", 1: "Average", 2: "Good"}
     predicted_score = credit_score_label[prediction[0]]
     confidence = max(prediction_proba[0])
 
-    # Display result
+    # Display the profile summary
+    st.subheader("Profile Summary")
+    st.write(f"**Name**: {name}")
+    st.write(f"**Age**: {age}")
+    st.write(f"**Profession**: {profession}")
+    st.write(f"**SSN**: {ssn}")
+    st.write(f"**Month**: {datetime.now().strftime('%B %Y')}")
+
+    # Display the input data
+    st.write("### Your Input Data:")
+    st.write(f"**Credit History Age**: {credit_history_age} weeks")
+    st.write(f"**Monthly Balance**: ${monthly_balance}")
+    st.write(f"**Monthly Inhand Salary**: ${monthly_inhand_salary}")
+    st.write(f"**Annual Income**: ${annual_income}")
+    st.write(f"**Interest Rate**: {interest_rate}%")
+    st.write(f"**Outstanding Debt**: ${outstanding_debt}")
+    st.write(f"**Number of Loans**: {num_of_loan}")
+    st.write(f"**Delay from Due Date**: {delay_from_due_date} days")
+    st.write(f"**Number of Delayed Payments**: {num_of_delayed_payment}")
+    st.write(f"**Total EMI per Month**: ${total_emi_per_month}")
+    st.write(f"**Number of Credit Inquiries**: {num_credit_inquiries}")
+
+    # Display the predicted credit score
     st.success(f"Predicted Credit Score: {predicted_score} (Confidence: {confidence:.2%})")
+
     # Define thresholds for each input (example values – you can adjust as needed)
     thresholds = {
         'credit_history_age': [10, 30, 60],             # weeks
@@ -199,22 +217,16 @@ def process_form(credit_history_age, monthly_balance, monthly_inhand_salary, ann
     fig_feature_donut.update_layout(title_text="Per-Feature Classification Confidence")
     st.plotly_chart(fig_feature_donut)
 
-    # 📈 Bar Chart for Input Feature Overview
-    st.subheader("Your Input Summary")
-    fig_features = go.Figure([go.Bar(
-        x=input_data.columns,
-        y=input_data.iloc[0],
-        marker_color='lightskyblue'
-    )])
-    fig_features.update_layout(xaxis_title="Feature", yaxis_title="Value")
-    st.plotly_chart(fig_features)
-    
 # Function to display the input form
 def display_form():
     st.title("Credit Score Prediction")
     st.subheader("Enter Your Details")
 
     with st.form(key='credit_score_form'):
+        name = st.text_input("Full Name")
+        age = st.number_input("Age", min_value=0, max_value=120)
+        profession = st.text_input("Profession")
+        ssn = str(random.randint(100000000, 999999999))  # Generate a random SSN
         credit_history_age = st.number_input("Credit History Age (in weeks)", min_value=0)
         monthly_balance = st.number_input("Monthly Balance ($)", min_value=0.0)
         monthly_inhand_salary = st.number_input("Monthly Inhand Salary ($)", min_value=0.0)
@@ -232,7 +244,8 @@ def display_form():
     if submit_button:
         process_form(credit_history_age, monthly_balance, monthly_inhand_salary, annual_income,
                      interest_rate, outstanding_debt, num_of_loan, delay_from_due_date,
-                     num_of_delayed_payment, total_emi_per_month, num_credit_inquiries)
+                     num_of_delayed_payment, total_emi_per_month, num_credit_inquiries,
+                     name, age, profession, ssn)
 
 # Run the Streamlit app
 if __name__ == '__main__':
