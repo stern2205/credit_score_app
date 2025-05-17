@@ -5,6 +5,102 @@ import plotly.graph_objects as go
 import numpy as np
 import random
 from datetime import datetime
+import psycopg2
+
+# Function to connect to the PostgreSQL database
+def connect_db():
+    try:
+        conn = psycopg2.connect(
+            host="localhost",        # e.g., "localhost" or IP address of your database server
+            database="history", # your database name
+            user="postgres",        # your PostgreSQL username
+            password="yanno" # your PostgreSQL password
+        )
+        return conn
+    except Exception as e:
+        st.error(f"Error connecting to database: {e}")
+        return None
+
+def save_to_database(name, age, profession, ssn, credit_history_age, monthly_balance, monthly_inhand_salary,
+                     annual_income, interest_rate, outstanding_debt, num_of_loan, delay_from_due_date,
+                     num_of_delayed_payment, total_emi_per_month, num_credit_inquiries, predicted_score):
+    
+    # Connect to the database
+    conn = connect_db()
+    if conn:
+        try:
+            # Create a cursor object
+            cursor = conn.cursor()
+
+            # Define your SQL insert query
+            query = """
+            INSERT INTO credit_history (name, age, profession, ssn, credit_history_age, monthly_balance,
+                monthly_inhand_salary, annual_income, interest_rate, outstanding_debt, num_of_loan, delay_from_due_date,
+                num_of_delayed_payment, total_emi_per_month, num_credit_inquiries, predicted_score)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            """
+            
+            # Execute the query with the user data
+            cursor.execute(query, (name, age, profession, ssn, credit_history_age, monthly_balance, monthly_inhand_salary,
+                                   annual_income, interest_rate, outstanding_debt, num_of_loan, delay_from_due_date,
+                                   num_of_delayed_payment, total_emi_per_month, num_credit_inquiries, predicted_score))
+
+            # Commit the data
+            conn.commit()
+            st.success("Data saved successfully!")
+        except Exception as e:
+            st.error(f"Error saving to database: {e}")
+        finally:
+            # Close the connection
+            cursor.close()
+            conn.close()
+
+# Function to fetch the latest 5 entries from the database
+def fetch_latest_entries():
+    conn = connect_db()
+    if conn:
+        try:
+            cursor = conn.cursor()
+            # Query to get the latest 5 entries based on the timestamp or ID (assuming ID is auto-incremented)
+            query = """
+            SELECT name, age, profession, ssn, credit_history_age, monthly_balance, 
+                   monthly_inhand_salary, annual_income, interest_rate, outstanding_debt,
+                   num_of_loan, delay_from_due_date, num_of_delayed_payment, 
+                   total_emi_per_month, num_credit_inquiries, predicted_score
+            FROM credit_history
+            ORDER BY id DESC
+            LIMIT 5;
+            """
+            cursor.execute(query)
+            rows = cursor.fetchall()
+            return rows
+        except Exception as e:
+            st.error(f"Error fetching data from database: {e}")
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    return []
+
+# Function to display the latest entries
+def display_latest_entries():
+    st.subheader("Latest 5 Credit Score Predictions")
+    entries = fetch_latest_entries()
+
+    if not entries:
+        st.info("No entries found.")
+        return
+
+    # Create a DataFrame from the fetched entries
+    df = pd.DataFrame(entries, columns=[
+        'Name', 'Age', 'Profession', 'SSN', 'Credit History Age', 'Monthly Balance',
+        'Monthly Inhand Salary', 'Annual Income', 'Interest Rate', 'Outstanding Debt',
+        'Number of Loans', 'Delay from Due Date', 'Number of Delayed Payments',
+        'Total EMI per Month', 'Number of Credit Inquiries', 'Predicted Score'
+    ])
+
+    # Display the DataFrame in Streamlit
+    st.dataframe(df)
 
 # Function to process the form data and make predictions
 def process_form(credit_history_age, monthly_balance, monthly_inhand_salary, annual_income,
@@ -76,6 +172,10 @@ def process_form(credit_history_age, monthly_balance, monthly_inhand_salary, ann
 
     # Display the predicted credit score
     st.success(f"Predicted Credit Score: {predicted_score} (Confidence: {confidence:.2%})")
+
+    save_to_database(name, age, profession, ssn, credit_history_age, monthly_balance, monthly_inhand_salary,
+                     annual_income, interest_rate, outstanding_debt, num_of_loan, delay_from_due_date,
+                     num_of_delayed_payment, total_emi_per_month, num_credit_inquiries, predicted_score)
 
     # Define thresholds for each input (example values – you can adjust as needed)
     thresholds = {
@@ -250,3 +350,4 @@ def display_form():
 # Run the Streamlit app
 if __name__ == '__main__':
     display_form()
+    display_latest_entries()
