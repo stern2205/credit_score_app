@@ -21,39 +21,33 @@ The Credit Score Prediction App is a web application that predicts an individual
 ## Installation and Setup
 
 1. Clone the repository:
-
-Download the package.
-
-2. Navigate to the project directory:
-
+2. Download the package.
 3. Open the folder in Visual Studio Code.
-
 4. Install dependencies:
-'''
+```
 pip install -r requirements.txt
-'''
-
+```
 5. Set up the PostgreSQL database:
 
   Make sure PostgreSQL is installed and running on the host machine (your server).
 
   Create a new database:
-  '''
+  ```
   CREATE DATABASE credit_score_db;
-  '''
+  ```
 
   Update database credentials in the script if needed.
 
 ## How to Run the Application
 
 1. Start the Streamlit server:
-'''
+```
 streamlit run app.py
-'''
+```
 Open the application in your browser at:
-'''
+```
 http://localhost:8501
-'''
+```
 
 ## Usage
 
