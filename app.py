@@ -63,7 +63,7 @@ def fetch_latest_entries():
             cursor = conn.cursor()
             # Query to get the latest 5 entries based on the timestamp or ID (assuming ID is auto-incremented)
             query = """
-            SELECT name, age, profession, ssn, credit_history_age, monthly_balance, 
+            SELECT 'REDACTED' AS name, age, profession, 'REDACTED' AS ssn, credit_history_age, monthly_balance, 
                    monthly_inhand_salary, annual_income, interest_rate, outstanding_debt,
                    num_of_loan, delay_from_due_date, num_of_delayed_payment, 
                    total_emi_per_month, num_credit_inquiries, predicted_score
@@ -347,7 +347,44 @@ def display_form():
                      num_of_delayed_payment, total_emi_per_month, num_credit_inquiries,
                      name, age, profession, ssn)
 
-# Run the Streamlit app
-if __name__ == '__main__':
+import streamlit as st
+
+# Function to display Terms and Conditions page
+def terms_and_conditions():
+    st.title("Terms and Conditions")
+    st.write("""
+    Please read and accept the following terms and conditions before using the app.
+
+    1. **Ethical Use**: The application is designed to predict credit scores using user-provided financial data. The model is built to avoid bias related to age, gender, or other non-financial attributes, ensuring fairness and inclusivity.
+    2. **Transparency and Interpretability**: Visualizations such as radar and donut charts are used to make credit score predictions understandable and avoid black-box decision-making.
+    3. **Privacy Commitment**: The application collects data only after obtaining explicit user consent. All collected data is stored securely in a PostgreSQL database, adhering to data privacy best practices and legal requirements.
+    4. **Data Privacy and Legal Compliance**: The system follows the Philippine Data Privacy Act (RA 10173) by minimizing data collection, maintaining transparency, and ensuring data security.
+    5. **Data Accuracy**: Predictions made by this application are for informational purposes only and may not be completely accurate. Users are encouraged to use the results as one of many considerations when making decisions.
+    6. **User Responsibility**: Users must ensure the accuracy of the data they provide. Incorrect or incomplete data may result in inaccurate predictions.
+    7. **No Liability**: The creators of this application assume no liability for decisions made based on the app’s predictions.
+
+    By accepting, you agree to the terms and conditions stated above.
+    """)
+
+# Function to handle the main app content after terms are accepted
+def main_app():
+    st.title("Welcome to the Credit Score Prediction App!")
+    st.write("You have accepted the terms and conditions.")
+    
+    # Integrate the main credit score prediction app here
     display_form()
     display_latest_entries()
+
+# Run the Streamlit app
+if __name__ == '__main__':
+    # Terms and Conditions Page
+    if 'agreed' not in st.session_state:
+        st.session_state.agreed = False
+
+    # Display terms and conditions first
+    if not st.session_state.agreed:
+        terms_and_conditions()
+        if st.checkbox("I accept the terms and conditions"):
+            st.session_state.agreed = True
+    else:
+        main_app()
