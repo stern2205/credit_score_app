@@ -25,6 +25,9 @@ The Credit Score Prediction App is a web application that predicts an individual
 
 * Display the latest 5 credit score predictions
 
+## Dataset
+[Credit Score - Detailed & Comprehensive EDA by iremnurtokuroglu on Kaggle](https://www.kaggle.com/code/iremnurt)
+
 ## Installation and Setup
 
 1. Clone the repository:
@@ -85,4 +88,3 @@ http://localhost:8501
 2. Click the Submit button to see the predicted credit score.
 3. View the interactive radar and donut charts for detailed analysis.
 4. Check the latest 5 predictions in the summary section.
-
