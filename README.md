@@ -1,4 +1,11 @@
 # credit_score_app
+# Group 7
+
+## Atienza, John Paul B.
+## Calingasan, John Erick Z.
+## Lumalang, Carl John D.
+## Morales, Johann Daniel P.
+## Morillo, Jerime B.
 
 ## Project Overview
 
