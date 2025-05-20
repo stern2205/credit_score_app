@@ -43,6 +43,29 @@ pip install -r requirements.txt
   CREATE DATABASE credit_score_db;
   ```
 
+  Create the table schema
+  ```
+  CREATE TABLE credit_history (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    age INTEGER,
+    profession VARCHAR(100),
+    ssn VARCHAR(15),
+    credit_history_age INTEGER,
+    monthly_balance NUMERIC(12, 2),
+    monthly_inhand_salary NUMERIC(12, 2),
+    annual_income NUMERIC(12, 2),
+    interest_rate NUMERIC(5, 2),
+    outstanding_debt NUMERIC(12, 2),
+    num_of_loan INTEGER,
+    delay_from_due_date INTEGER,
+    num_of_delayed_payment INTEGER,
+    total_emi_per_month NUMERIC(12, 2),
+    num_credit_inquiries INTEGER,
+    predicted_score INTEGER
+);
+  ```
+
   Update database credentials in the script if needed.
 
 ## How to Run the Application
