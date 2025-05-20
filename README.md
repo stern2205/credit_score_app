@@ -21,7 +21,7 @@ The Credit Score Prediction App is a web application that predicts an individual
 
 * Interactive visualizations using Plotly (Radar and Donut charts)
 
-* Store and retrieve data from a PostgreSQL database
+* Store and retrieve data from a localhost PostgreSQL database
 
 * Display the latest 5 credit score predictions
 
@@ -31,7 +31,10 @@ The Credit Score Prediction App is a web application that predicts an individual
 ## Installation and Setup
 
 1. Clone the repository:
-2. Download the package.
+```
+git clone https://github.com/stern2205/credit_score_app
+```
+2. OR Download the package.
 3. Open the folder in Visual Studio Code.
 4. Install dependencies:
 ```
@@ -39,7 +42,7 @@ pip install -r requirements.txt
 ```
 5. Set up the PostgreSQL database:
 
-  Make sure PostgreSQL is installed and running on the host machine (your server).
+  Make sure PostgreSQL is installed and running on the localhost machine (your server).
 
   Create a new database:
   ```
